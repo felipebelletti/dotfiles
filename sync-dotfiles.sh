@@ -2,8 +2,7 @@
 
 configFiles=($HOME/.config/kitty/kitty.conf)
 
-cp ${configFiles[@]} git-dotfiles
-cd git-dotfiles
+cp ${configFiles[@]} .
 git add .
 git commit -m "Sync dotfiles"
 git push origin master
