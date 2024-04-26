@@ -1,6 +1,6 @@
 #!/bin/sh
 
-configFiles=($HOME/.config/kitty/kitty.conf)
+configFiles=($HOME/.config/kitty/kitty.conf $HOME/.config/yay/config.json)
 
 cp ${configFiles[@]} .
 git add .
