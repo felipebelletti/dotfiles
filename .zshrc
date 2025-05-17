@@ -74,19 +74,20 @@ plugins=(zsh-completions zsh-autosuggestions git zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-alias ls="exa --icons --git"
-alias lt="exa --tree --level=2 --long --icons --git"
+alias ls="eza --icons --git"
+alias lt="eza --tree --level=2 --long --icons --git"
 # alias cat="bat"
 
 export CARGO_HOME=/usr/local/.cargo
 export RUSTUP_HOME=/usr/local/.rustup
 
-export PATH=$PATH:$HOME/go/bin
-export PATH=$PATH:/usr/lib/jvm/java-19-openjdk/bin
-export PATH=$PATH:/opt/android-sdk/cmdline-tools/latest/bin
-export PATH=$PATH:$HOME/.local/share/solana/install/active_release/bin
-export PATH=$PATH:/opt/flutter/bin
-export PATH=$PATH:$HOME/.local/bin
+export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:/usr/lib/jvm/java-19-openjdk/bin"
+export PATH="$PATH:/opt/android-sdk/cmdline-tools/latest/bin"
+export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"
+export PATH="$PATH:/opt/flutter/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:/opt/homebrew/bin"
 
 # source /usr/share/nvm/init-nvm.sh
 
@@ -97,7 +98,7 @@ export PATH="$PATH:$HOME/.local/share/gem/ruby/3.3.0/bin"
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
 
 export PATH="$PATH:$HOME/.local/bin:$HOME/.axiom/interact"
-source $HOME/.axiom/interact/includes/ax-completion.sh
+[ -f "$HOME/.axiom/interact/includes/ax-completion.sh" ] && source "$HOME/.axiom/interact/includes/ax-completion.sh"
 
 [[ "$TERM_PROGRAM" == "vscode" ]] && unset ARGV0
 if [[ "$ARGV0" == "/opt/cursor-bin/cursor-bin.AppImage" ]]; then
