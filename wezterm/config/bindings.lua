@@ -13,6 +13,28 @@ elseif platform.is_win or platform.is_linux then
    mod.SUPER_REV = 'ALT|CTRL'
 end
 
+-- Define the action for ⌘/SUPER + W depending on the platform
+local cmd_w_action
+if platform.is_mac then
+   -- On macOS: send Ctrl+W (delete previous word)
+   cmd_w_action = act.SendKey({ key = 'w', mods = 'CTRL' })
+else
+   -- On other platforms: keep the old behaviour of closing the current pane without confirmation
+   cmd_w_action = act.CloseCurrentPane({ confirm = false })
+end
+
+-- Define actions for ⌘/SUPER + Arrow and ⌘/SUPER + Backspace depending on the platform
+local cmd_left_action, cmd_right_action, cmd_backspace_action
+if platform.is_mac then
+   cmd_left_action = act.SendKey({ key = 'a', mods = 'CTRL' })  -- move to beginning of line
+   cmd_right_action = act.SendKey({ key = 'e', mods = 'CTRL' }) -- move to end of line
+   cmd_backspace_action = act.SendKey({ key = 'u', mods = 'CTRL' }) -- delete to beginning of line
+else
+   cmd_left_action = act.SendString '\x1bOH' -- Home
+   cmd_right_action = act.SendString '\x1bOF' -- End
+   cmd_backspace_action = act.SendString '\x15' -- Unix-line-discard (Ctrl+U)
+end
+
 -- stylua: ignore
 local keys = {
    -- misc/useful --
@@ -49,13 +71,15 @@ local keys = {
    },
 
    -- cursor movement --
-   { key = 'LeftArrow',  mods = mod.SUPER,     action = act.SendString '\x1bOH' },
-   { key = 'RightArrow', mods = mod.SUPER,     action = act.SendString '\x1bOF' },
-   { key = 'Backspace',  mods = mod.SUPER,     action = act.SendString '\x15' },
+   { key = 'LeftArrow',  mods = mod.SUPER,     action = cmd_left_action },
+   { key = 'RightArrow', mods = mod.SUPER,     action = cmd_right_action },
+   { key = 'Backspace',  mods = mod.SUPER,     action = cmd_backspace_action },
 
    -- copy/paste --
    { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
    { key = 'v',          mods = 'CTRL|SHIFT',  action = act.PasteFrom('Clipboard') },
+   { key = 'c',          mods = mod.SUPER,     action = act.CopyTo('Clipboard') },
+   { key = 'v',          mods = mod.SUPER,     action = act.PasteFrom('Clipboard') },
 
    -- tabs --
    -- tabs: spawn+close
@@ -125,7 +149,7 @@ local keys = {
 
    -- panes: zoom+close pane
    { key = 'Enter', mods = mod.SUPER,     action = act.TogglePaneZoomState },
-   { key = 'w',     mods = mod.SUPER,     action = act.CloseCurrentPane({ confirm = false }) },
+   { key = 'w',     mods = mod.SUPER,     action = cmd_w_action },
 
    -- panes: navigation
    { key = 'k',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Up') },
@@ -160,6 +184,21 @@ local keys = {
       }),
    },
 }
+
+-- macOS-specific additional key bindings
+if platform.is_mac then
+   local mac_keys = {
+      { key = 'LeftArrow',  mods = 'OPT',        action = act.SendKey({ key = 'b', mods = 'ALT' }) },
+      { key = 'RightArrow', mods = 'OPT',        action = act.SendKey({ key = 'f', mods = 'ALT' }) },
+      { key = 'LeftArrow',  mods = 'CMD|OPT',    action = act.ActivateTabRelative(-1) },
+      { key = 'RightArrow', mods = 'CMD|OPT',    action = act.ActivateTabRelative(1) },
+      { key = 'LeftArrow',  mods = 'CMD|SHIFT',  action = act.ActivateTabRelative(-1) },
+      { key = 'RightArrow', mods = 'CMD|SHIFT',  action = act.ActivateTabRelative(1) },
+   }
+   for _, k in ipairs(mac_keys) do
+      table.insert(keys, k)
+   end
+end
 
 -- stylua: ignore
 local key_tables = {
